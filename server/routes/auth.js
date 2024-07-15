@@ -17,6 +17,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+
 /* USER REGISTER */
 router.post("/register", upload.single("profileImage"), async (req, res) => {
   try {
@@ -66,5 +67,34 @@ router.post("/register", upload.single("profileImage"), async (req, res) => {
       .json({ message: "Registration failed!", error: err.message });
   }
 });
+/* USER LOGIN*/
+router.post("/login", async (req, res) => {
+  try {
+    /* Take the infomation from the form */
+    const { email, password } = req.body
 
-module.exports = router;
+    /* Check if user exists */
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(409).json({ message: "User doesn't exist!" });
+    }
+
+    /* Compare the password with the hashed password */
+    const isMatch = await bcrypt.compare(password, user.password)
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid Credentials!"})
+    }
+
+    /* Generate JWT token */
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET)
+    delete user.password
+
+    res.status(200).json({ token, user })
+
+  } catch (err) {
+    console.log(err)
+    res.status(500).json({ error: err.message })
+  }
+})
+
+module.exports = router
