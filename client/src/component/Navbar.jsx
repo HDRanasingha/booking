@@ -77,7 +77,7 @@ const Navbar = () => {
           </div>
         )}
 
-        {dropdownMenu && !user && (
+        {dropdownMenu && user && (
           <div className="navbar_right_accountmenu">
             <Link to="">Trip List</Link>
             <Link to="">Wish List</Link>
