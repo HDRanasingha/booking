@@ -17,12 +17,18 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-
 /* USER REGISTER */
 router.post("/register", upload.single("profileImage"), async (req, res) => {
   try {
     /* Take all information from the form */
     const { firstName, lastName, email, password } = req.body;
+
+    /* Check if email is null */
+    if (!email) {
+      return res.status(400).json({ message: "Email cannot be null or empty" });
+    }
+
+    
 
     /* The uploaded file is available as req.file */
     const profileImage = req.file;
@@ -67,6 +73,7 @@ router.post("/register", upload.single("profileImage"), async (req, res) => {
       .json({ message: "Registration failed!", error: err.message });
   }
 });
+
 /* USER LOGIN*/
 router.post("/login", async (req, res) => {
   try {
