@@ -51,16 +51,13 @@ const Navbar = () => {
           </a>
         )}
 
-        <button
-          className="navbar_right_account"onClick={() => setDropdownMenu(!dropdownMenu)}
-         
-        >
+<button className="navbar_right_account" onClick={()=> setDropdownMenu(!dropdownMenu)}>
           <Menu sx={{ color: variables.darkgrey }} />
           {!user ? (
             <Person sx={{ color: variables.darkgrey }} />
           ) : (
             <img
-              src={`http://localhost:3001/${user.profileImagePath.replace(
+              src={`http://localhost:3002/${user.profileImagePath.replace(
                 "public",
                 ""
               )}`}
