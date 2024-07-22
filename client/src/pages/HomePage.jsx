@@ -1,6 +1,7 @@
 import Navbar from "../component/Navbar"
 import Slide from "../component/Slide"
 import Categories from "../component/Categories"
+import Listings from "../component/Listings"
 
 const HomePage= () => {
     return(
@@ -8,6 +9,7 @@ const HomePage= () => {
         <Navbar/>
         <Slide/>
         <Categories/>
+        <Listings/>
         </>
     )
 }
