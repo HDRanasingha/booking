@@ -77,7 +77,7 @@ console.log(amenities);
     description: "",
     highlight: "",
     highlightDesc: "",
-    price: 0,
+    price: ""
   });
 
   const handleChangeDescription = (e) => {
