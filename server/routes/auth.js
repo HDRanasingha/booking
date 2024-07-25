@@ -2,8 +2,10 @@ const router = require("express").Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const multer = require("multer");
-
 const User = require("../models/User");
+
+
+
 
 /* Configuration Multer for File Upload */
 const storage = multer.diskStorage({
@@ -22,13 +24,6 @@ router.post("/register", upload.single("profileImage"), async (req, res) => {
   try {
     /* Take all information from the form */
     const { firstName, lastName, email, password } = req.body;
-
-    /* Check if email is null */
-    if (!email) {
-      return res.status(400).json({ message: "Email cannot be null or empty" });
-    }
-
-    
 
     /* The uploaded file is available as req.file */
     const profileImage = req.file;
