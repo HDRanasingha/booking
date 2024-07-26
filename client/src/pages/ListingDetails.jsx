@@ -9,9 +9,10 @@ import { DateRange } from "react-date-range";
 import Loader from "../component/Loader";
 import Navbar from "../component/Navbar";
 import { useSelector } from "react-redux";
+import Footer from "../component/Footer";
 
 const ListingDetails = () => {
-  const [loading, setloading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   const { listingId } = useParams();
   const [listing, setListing] = useState(null);
@@ -27,9 +28,9 @@ const ListingDetails = () => {
 
       const data = await response.json();
       setListing(data);
-      setloading(false);
+      setLoading(false);
     } catch (err) {
-      console.log("fetch Listing Details Failed", err.message);
+      console.log("Fetch Listing Details Failed", err.message);
     }
   };
 
@@ -37,7 +38,10 @@ const ListingDetails = () => {
     getListingDetails();
   }, []);
 
-  /*BOOKING CALENDAR */
+  console.log(listing)
+
+
+  /* BOOKING CALENDAR */
   const [dateRange, setDateRange] = useState([
     {
       startDate: new Date(),
@@ -47,65 +51,70 @@ const ListingDetails = () => {
   ]);
 
   const handleSelect = (ranges) => {
-    //Update the selected date range when  user makes a selection
+    // Update the selected date range when user makes a selection
     setDateRange([ranges.selection]);
   };
 
   const start = new Date(dateRange[0].startDate);
   const end = new Date(dateRange[0].endDate);
-  const dayCount = Math.round(end - start) / (1000 * 60 * 60 * 24); //calculate the difference in day unit
+  const dayCount = Math.round(end - start) / (1000 * 60 * 60 * 24); // Calculate the difference in day unit
 
-/*SUBMIT BOOKING*/
-const customerId = useSelector((state) => state?.user?._id)
+  /* SUBMIT BOOKING */
+  const customerId = useSelector((state) => state?.user?._id)
 
-const navigate = useNavigate()
+  const navigate = useNavigate()
 
-const handleSubmit = async () => {
-  try {
-    const bookingForm = {
-      customerId,
-      listingId,
-      hostId: listing.creator._id,
-      startDate: dateRange[0].startDate.toDateString(),
-      endDate: dateRange[0].endDate.toDateString(),
-      totalPrice: listing.price * dayCount,
+  const handleSubmit = async () => {
+    try {
+      const bookingForm = {
+        customerId,
+        listingId,
+        hostId: listing.creator._id,
+        startDate: dateRange[0].startDate.toDateString(),
+        endDate: dateRange[0].endDate.toDateString(),
+        totalPrice: listing.price * dayCount,
+      }
+
+      const response = await fetch("http://localhost:3002/bookings/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bookingForm)
+      })
+
+      if (response.ok) {
+        navigate(`/${customerId}/trips`)
+      }
+    } catch (err) {
+      console.log("Submit Booking Failed.", err.message)
     }
-
-    const response = await fetch("http://localhost:3002/bookings/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(bookingForm)
-    })
-
-    if (response.ok) {
-      navigate(`/${customerId}/trips`)
-    }
-  } catch (err) {
-    console.log("Submit Booking Failed.", err.message)
   }
-}
+
   return loading ? (
     <Loader />
   ) : (
     <>
-    <Navbar/>
+      <Navbar />
+      
       <div className="listing-details">
         <div className="title">
           <h1>{listing.title}</h1>
           <div></div>
         </div>
+
         <div className="photos">
           {listing.listingPhotoPaths?.map((item) => (
             <img
               src={`http://localhost:3002/${item.replace("public", "")}`}
-              alt="listing photos"
+              alt="listing photo"
             />
           ))}
         </div>
+
         <h2>
-          {listing.type} in {listing.city},{listing.province},{listing.country}
+          {listing.type} in {listing.city}, {listing.province},{" "}
+          {listing.country}
         </h2>
         <p>
           {listing.guestCount} guests - {listing.bedroomCount} bedroom(s) -{" "}
@@ -138,23 +147,21 @@ const handleSubmit = async () => {
           <div>
             <h2>What this place offers?</h2>
             <div className="amenities">
-              {listing.amenities[0].split(",").map((item, index) => {
-                const facility = facilities.find(
-                  (facility) => facility.name === item
-                );
-                return (
-                  <div className="facility" key={index}>
-                    <div className="facility_icon">
-                      {facility ? facility.icon : null}
-                    </div>
-                    <p>{item}</p>
+              {listing.amenities[0].split(",").map((item, index) => (
+                <div className="facility" key={index}>
+                  <div className="facility_icon">
+                    {
+                      facilities.find((facility) => facility.name === item)
+                        ?.icon
+                    }
                   </div>
-                );
-              })}
+                  <p>{item}</p>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-        <div>
+
+          <div>
             <h2>How long do you want to stay?</h2>
             <div className="date-range-calendar">
               <DateRange ranges={dateRange} onChange={handleSelect} />
@@ -176,9 +183,11 @@ const handleSubmit = async () => {
                 BOOKING
               </button>
             </div>
+          </div>
         </div>
       </div>
-      
+
+    <Footer/>
     </>
   );
 };

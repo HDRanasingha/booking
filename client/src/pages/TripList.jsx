@@ -7,6 +7,7 @@ import { setTripList } from "../redux/state";
 import Navbar from "../component/Navbar";
 import ListingCard from "../component/ListingCard";
 import Loader from "../component/Loader";
+import Footer from "../component/Footer";
 
 
 
@@ -61,7 +62,7 @@ const TripList = () => {
           />
         ))}
       </div>
-     
+     <Footer/>
     </>
   );
 };

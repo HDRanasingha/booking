@@ -9,6 +9,7 @@ import { IoIosImages } from "react-icons/io";
 import { BiTrash } from "react-icons/bi";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import Footer from "../component/Footer";
 
 const CreateListing = () => {
   const [category, setCategory] = useState("");
@@ -481,7 +482,9 @@ console.log("Publish Listing failed", err.message);
           <button className="submit_btn" type="submit">CREATE YOUR LISTING</button>
         </form>
       </div>
+  <Footer/>
     </>
+    
   );
 };
 
